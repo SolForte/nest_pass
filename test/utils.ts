@@ -21,6 +21,6 @@ export class Helpers {
   }
 
   async generateToken(user: Omit<User, 'createdAt' | 'updatedAt'>) {
-    return this.jwt.sign(user, { issuer: 'Driven' });
+    return this.jwt.sign(user, { issuer: 'DRIVEN' });
   }
 }
