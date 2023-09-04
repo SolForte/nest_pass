@@ -66,7 +66,14 @@ export class CardsService {
 
   async removeCard(id: number, userId: number) {
     const card = await this.findOneCard(id, userId);
-    return this.cardsRepository.remove(card.id);
+    const deleteCard = await this.cardsRepository.remove(card.id);
+    return exclude(
+      deleteCard,
+      'password',
+      'secureCode',
+      'createdAt',
+      'updatedAt',
+    );
   }
 
   private cardValidation(cards: CreditCard, userId: number) {

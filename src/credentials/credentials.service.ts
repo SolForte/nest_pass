@@ -69,7 +69,10 @@ export class CredentialsService {
 
   async removeCredential(id: number, userId: number) {
     const credential = await this.findOneCredential(id, userId);
-    return this.credentialsRepository.removeCredential(credential.id);
+    const removeCredential = await this.credentialsRepository.removeCredential(
+      credential.id,
+    );
+    return exclude(removeCredential, 'password', 'createdAt', 'updatedAt');
   }
 
   private validCredentials(credentials: Credential, userId: number) {

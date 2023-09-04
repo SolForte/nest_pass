@@ -52,7 +52,8 @@ export class NotesService {
 
   async removeNote(id: number, userId: number) {
     const note = await this.findOneNote(id, userId);
-    return this.notesRepository.removeNote(note.id);
+    const removedNotes = await this.notesRepository.removeNote(note.id);
+    return exclude(removedNotes, 'updatedAt', 'createdAt', 'description');
   }
 
   private noteValidation(notes: Note, userId: number) {

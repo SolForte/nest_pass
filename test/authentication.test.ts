@@ -100,10 +100,13 @@ describe('AppController (e2e)', () => {
 
     describe('should return 200', () => {
       it('if user exists', async () => {
-        const { status } = await server
+        const { status, body } = await server
           .post('/users/sign-in')
           .send({ email: VALID_EMAIL, password: VALID_PASSWORD });
         expect(status).toBe(200);
+        expect(body).toEqual({
+          access_token: expect.any(String),
+        });
       });
     });
   });

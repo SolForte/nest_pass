@@ -5,6 +5,7 @@ import { UsersService } from '../users.service';
 import { SignInDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
+import { exclude } from '../../utils/prisma.utils';
 
 export type JWTPayload = Pick<User, 'email' | 'id'>;
 
@@ -18,8 +19,9 @@ export class AuthService {
     this.ISSUER = 'DRIVEN';
   }
 
-  logIn(signUpDto: SignUpDto) {
-    return this.userService.createUser(signUpDto);
+  async logIn(signUpDto: SignUpDto) {
+    const createdAcc = await this.userService.createUser(signUpDto);
+    return exclude(createdAcc, 'password');
   }
 
   async logOut(signInDto: SignInDto) {
