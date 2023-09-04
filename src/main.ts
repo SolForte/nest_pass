@@ -7,13 +7,18 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
   const config = new DocumentBuilder()
-    .setTitle('DrivenPass')
-    .setDescription('The DrivenPass API description')
+    .setTitle('Driven Pass API')
+    .setDescription(
+      'The documentation of the Driven Pass API, a password manager application made using Nest.js.',
+    )
     .setVersion('1.0')
-    .addTag('DrivenPass')
+    .addTag('Driven Pass')
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-  await app.listen(3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port, () => {
+    console.log('Server is up and running on port: ' + port);
+  });
 }
 bootstrap();

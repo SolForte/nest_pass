@@ -17,7 +17,7 @@ export class CardsService {
   constructor(private readonly cardsRepository: CardsRepository) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const Cryptr = require('cryptr');
-    this.cryptr = new Cryptr(process.env.SECRET);
+    this.cryptr = new Cryptr(process.env.JWT_SECRET);
   }
 
   async createCard(createCardDto: CreateCardDto, user: JWTPayload) {
