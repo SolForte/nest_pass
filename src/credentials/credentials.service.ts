@@ -18,7 +18,7 @@ export class CredentialsService {
   constructor(private readonly credentialsRepository: CredentialsRepository) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const Cryptr = require('cryptr');
-    this.cryptr = new Cryptr(process.env.JWT_SECRET);
+    this.cryptr = new Cryptr(process.env.SECRET);
   }
 
   async create(createCredentialDto: CreateCredentialDto, user: JWTPayload) {

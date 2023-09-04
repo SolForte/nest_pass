@@ -24,7 +24,7 @@
     "prisma:prod": "npx prisma migrate deploy",
     "prisma:prod:seed": "npx prisma db seed"
   },
-  "prisma": {
+    "prisma": {
     "seed": "ts-node prisma/seed.ts"
   },
   "dependencies": {

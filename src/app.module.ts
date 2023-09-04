@@ -16,7 +16,7 @@ import { JwtModule } from '@nestjs/jwt';
     CardsModule,
     NotesModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: process.env.SECRET,
       global: true,
     }),
   ],

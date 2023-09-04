@@ -13,7 +13,7 @@ export class Helpers {
     private readonly jwt: JwtService,
   ) {
     const Cryptr = require('cryptr');
-    this.cryptr = new Cryptr(process.env.JWT_SECRET);
+    this.cryptr = new Cryptr(process.env.SECRET);
   }
 
   async cleanDatabase() {
