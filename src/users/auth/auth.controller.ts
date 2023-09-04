@@ -1,5 +1,13 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
-import { AuthService } from './auth.service';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+} from '@nestjs/common';
+import { AuthService, JWTPayload } from './auth.service';
 import { SignUpDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import {
@@ -9,6 +17,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '../../decorators/user.decorator';
+import { DeleteDto } from '../dto/delete-user.dto';
+import { AuthGuard } from '../../guards/auth.guard';
 
 class SignInResponse {
   @ApiProperty({ name: 'acess_token', example: 'Bearer Token' })
@@ -54,5 +65,24 @@ export class AuthController {
   })
   signIn(@Body() signInDto: SignInDto) {
     return this.authenticationService.logOut(signInDto);
+  }
+
+  @HttpCode(200)
+  @ApiOperation({ summary: 'Delete user account' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'OK',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Invalid password',
+  })
+  @ApiBody({
+    type: DeleteDto,
+  })
+  @UseGuards(AuthGuard)
+  @Delete('/erase')
+  deleteUser(@User() user: JWTPayload, @Body() deleteDto: DeleteDto) {
+    return this.authenticationService.deleteUser(user, deleteDto);
   }
 }

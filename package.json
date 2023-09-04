@@ -19,7 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "dotenv -e .env.test -- jest --runInBand --config ./test/jest-e2e.json",
     "test:load-env": "dotenv -e .env.test",
-    "test:migrate": "npm run test:load-env -- prisma migrate deploy"
+    "test:migrate": "npm run test:load-env -- prisma migrate deploy",
+    "prisma:migrate":"prisma migrate dev"
   },
   "dependencies": {
     "@nestjs/common": "^10.2.4",

@@ -19,4 +19,10 @@ export class UserRepository {
       data,
     });
   }
+
+  delete(where: Prisma.UserWhereUniqueInput) {
+    return this.prisma.user.delete({
+      where,
+    });
+  }
 }

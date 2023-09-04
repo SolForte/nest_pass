@@ -34,7 +34,7 @@ export class UsersService {
     return this.userRepository.listOneUser({ email });
   }
 
-  remove(id: number) {
-    return `Removes #${id} user`;
+  async deleteUser(id: number) {
+    return this.userRepository.delete({ id });
   }
 }

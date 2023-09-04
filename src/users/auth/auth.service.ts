@@ -6,6 +6,7 @@ import { SignInDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
 import { exclude } from '../../utils/prisma.utils';
+import { DeleteDto } from '../dto/delete-user.dto';
 
 export type JWTPayload = Pick<User, 'email' | 'id'>;
 
@@ -54,5 +55,23 @@ export class AuthService {
     return await this.jwtService.verifyAsync<JWTPayload>(token, {
       issuer: this.ISSUER,
     });
+  }
+
+  async deleteUser(user: JWTPayload, deleteDto: DeleteDto) {
+    const { email, id } = user;
+    const databaseUser = await this.userService.findUserByEmail(email);
+
+    const validation = await bcrypt.compare(
+      deleteDto.password,
+      databaseUser.password,
+    );
+
+    if (!validation) {
+      console.log('A senha é inválida');
+      throw new UnauthorizedException();
+    }
+    const result = await this.userService.deleteUser(id);
+
+    return exclude(result, 'password', 'createdAt', 'updatedAt');
   }
 }
