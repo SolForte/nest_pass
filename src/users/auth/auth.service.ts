@@ -6,7 +6,7 @@ import { SignInDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
 
-type jwtType = Pick<User, 'email' | 'id'>;
+export type JWTPayload = Pick<User, 'email' | 'id'>;
 
 @Injectable()
 export class AuthService {
@@ -37,14 +37,20 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    return this.generateValidJwtToken({ email: user.email, id: user.id });
+    return this.generateToken({ email: user.email, id: user.id });
   }
 
-  private async generateValidJwtToken(payload: jwtType) {
+  private generateToken(payload: JWTPayload) {
     return {
       access_token: this.jwtService.sign(payload, {
         issuer: this.ISSUER,
       }),
     };
+  }
+
+  async validateToken(token: string) {
+    return await this.jwtService.verifyAsync<JWTPayload>(token, {
+      issuer: this.ISSUER,
+    });
   }
 }
