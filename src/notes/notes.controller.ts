@@ -31,7 +31,7 @@ export class NotesController {
   constructor(private readonly notesService: NotesService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create notes for user' })
+  @ApiOperation({ summary: 'Create a new note for user' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Created',
@@ -48,45 +48,45 @@ export class NotesController {
     description: 'Receive title and description',
     type: CreateNotesDto,
   })
-  createNote(@Body() createNotesDto: CreateNotesDto, @User() user: JWTPayload) {
-    return this.notesService.createNote(createNotesDto, user);
+  postNote(@Body() createNotesDto: CreateNotesDto, @User() user: JWTPayload) {
+    return this.notesService.createNewNote(createNotesDto, user);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all notes by userId' })
+  @ApiOperation({ summary: 'Get all notes from user' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Returns ok with all notes from userId',
+    description: 'Returns ok with all notes from user',
   })
-  findAllNotes(@User('id') id: number) {
-    return this.notesService.findAllNotes(id);
+  getAllNotes(@User('id') id: number) {
+    return this.notesService.fetchAllNotes(id);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get one note by param id (userId)' })
+  @ApiOperation({ summary: 'Get one note by param id' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Returns ok with one note',
+    description: 'Returns ok with one note by param id',
   })
   @ApiParam({ name: 'id', example: 1 })
-  findOneNote(
+  getOneNoteById(
     @Param('id', ParseIntPipe) paramId: string,
     @User('id') userId: number,
   ) {
-    return this.notesService.findOneNote(+paramId, userId);
+    return this.notesService.getNoteById(+paramId, userId);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete one note by param id (userId)' })
+  @ApiOperation({ summary: 'Delete one note by param id' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Deletes note and returns ok',
+    description: 'Deletes note and returns ok with deleted note information',
   })
   @ApiParam({ name: 'id', example: 1 })
-  removeNote(
+  deleteNote(
     @Param('id', ParseIntPipe) paramId: string,
     @User('id') userId: number,
   ) {
-    return this.notesService.removeNote(+paramId, userId);
+    return this.notesService.eraseNote(+paramId, userId);
   }
 }

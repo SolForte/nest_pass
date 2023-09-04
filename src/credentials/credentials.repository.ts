@@ -12,19 +12,19 @@ export class CredentialsRepository {
     });
   }
 
-  findAllCredentials(where: Prisma.CredentialWhereInput) {
+  findManyCredentials(where: Prisma.CredentialWhereInput) {
     return this.prisma.credential.findMany({
       where,
     });
   }
 
-  listOneCredential(where: Prisma.CredentialWhereInput) {
+  getSingleCredential(where: Prisma.CredentialWhereInput) {
     return this.prisma.credential.findFirst({
       where,
     });
   }
 
-  removeCredential(id: number) {
+  deleteCredential(id: number) {
     return this.prisma.credential.delete({
       where: {
         id,

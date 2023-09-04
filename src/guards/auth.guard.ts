@@ -7,6 +7,8 @@ import {
 import { AuthService, JWTPayload } from '../users/auth/auth.service';
 import { Request } from 'express';
 
+export type AuthenticatedRoute = Request & { user: JWTPayload };
+
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
@@ -32,7 +34,7 @@ export class AuthGuard implements CanActivate {
     }
 
     try {
-      const data = await this.authService.validateToken(token);
+      const data = await this.authService.tokenValidation(token);
       request.user = { email: data.email, id: data.id };
       return true;
     } catch (error) {
@@ -40,5 +42,3 @@ export class AuthGuard implements CanActivate {
     }
   }
 }
-
-export type AuthenticatedRoute = Request & { user: JWTPayload };

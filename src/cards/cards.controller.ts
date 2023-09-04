@@ -53,17 +53,17 @@ export class CardsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get cards for user' })
+  @ApiOperation({ summary: 'Get cards from user' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns ok with all cards from user',
   })
   findAllCards(@User('id') id: number) {
-    return this.cardsService.findAll(+id);
+    return this.cardsService.getAllCards(+id);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get one card by param id (userId)' })
+  @ApiOperation({ summary: 'Get one card by param id' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns ok with one card',
@@ -73,20 +73,21 @@ export class CardsController {
     @Param('id', ParseIntPipe) paramId: string,
     @User('id') userId: number,
   ) {
-    return this.cardsService.findOneCard(+paramId, userId);
+    return this.cardsService.findOneCardById(+paramId, userId);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete card by param id (userId)' })
+  @ApiOperation({ summary: 'Delete card by param id' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Deletes card and returns ok',
+    description:
+      'Deletes card and returns ok with the deleted card information',
   })
   @ApiParam({ name: 'id', example: 1 })
   removeCard(
     @Param('id', ParseIntPipe) paramId: string,
     @User('id') userId: number,
   ) {
-    return this.cardsService.removeCard(+paramId, userId);
+    return this.cardsService.deleteCard(+paramId, userId);
   }
 }

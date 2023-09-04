@@ -35,7 +35,7 @@ export class CredentialsController {
     description: 'Receives title, username, description and password',
     type: CreateCredentialDto,
   })
-  create(
+  createCredentials(
     @Body() createCredentialDto: CreateCredentialDto,
     @User() user: JWTPayload,
   ) {
@@ -43,40 +43,41 @@ export class CredentialsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all credentials by userId' })
+  @ApiOperation({ summary: 'Get all credentials from user' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Returns ok with all credentials from user id',
+    description: 'Returns ok with all credentials from user',
   })
-  findAll(@User('id') id: number) {
+  getAllCredentials(@User('id') id: number) {
     return this.credentialsService.findAllCredentials(id);
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get one credential by param id (userId)' })
+  @ApiOperation({ summary: 'Get one credential by param id' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Returns ok with one credential',
+    description: 'Returns ok with one credential from user',
   })
   @ApiParam({ name: 'id', example: 1 })
-  findOne(
+  findOneCredential(
     @Param('id', ParseIntPipe) paramId: string,
     @User('id') userId: number,
   ) {
-    return this.credentialsService.findOneCredential(+paramId, userId);
+    return this.credentialsService.getOneCredential(+paramId, userId);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete one credential by param id (userId)' })
+  @ApiOperation({ summary: 'Delete one credential by param id' })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Deletes credential and returns ok',
+    description:
+      'Deletes credential and returns ok with deleted credential information',
   })
   @ApiParam({ name: 'id', example: 1 })
-  remove(
+  removeCredential(
     @Param('id', ParseIntPipe) paramId: string,
     @User('id') userId: number,
   ) {
-    return this.credentialsService.removeCredential(+paramId, userId);
+    return this.credentialsService.eraseCredential(+paramId, userId);
   }
 }

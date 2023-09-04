@@ -16,7 +16,7 @@ export class Helpers {
     this.cryptr = new Cryptr(process.env.SECRET);
   }
 
-  async cleanDb() {
+  async cleanDatabase() {
     await this.prisma.user.deleteMany();
   }
 

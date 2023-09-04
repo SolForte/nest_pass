@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { SignUpDto } from './dto/signup.dto';
+import { SignOutDto } from './dto/signup.dto';
 import { UsersService } from '../users.service';
 import { SignInDto } from './dto/signin.dto';
 import * as bcrypt from 'bcrypt';
@@ -20,8 +20,8 @@ export class AuthService {
     this.ISSUER = 'DRIVEN';
   }
 
-  async logIn(signUpDto: SignUpDto) {
-    const createdAcc = await this.userService.createUser(signUpDto);
+  async logIn(signUpDto: SignOutDto) {
+    const createdAcc = await this.userService.createNewUser(signUpDto);
     return exclude(createdAcc, 'password');
   }
 
@@ -51,7 +51,7 @@ export class AuthService {
     };
   }
 
-  async validateToken(token: string) {
+  async tokenValidation(token: string) {
     return await this.jwtService.verifyAsync<JWTPayload>(token, {
       issuer: this.ISSUER,
     });
@@ -67,7 +67,6 @@ export class AuthService {
     );
 
     if (!validation) {
-      console.log('A senha é inválida');
       throw new UnauthorizedException();
     }
     const result = await this.userService.deleteUser(id);

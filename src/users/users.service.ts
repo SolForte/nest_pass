@@ -8,7 +8,7 @@ export class UsersService {
   private readonly GEN_SALT_SYNC = bcrypt.genSaltSync(10);
 
   constructor(private readonly userRepository: UserRepository) {}
-  async createUser(createUserDto: CreateUserDto) {
+  async createNewUser(createUserDto: CreateUserDto) {
     try {
       const user = await this.userRepository.createUser({
         ...createUserDto,

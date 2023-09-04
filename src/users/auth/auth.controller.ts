@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService, JWTPayload } from './auth.service';
-import { SignUpDto } from './dto/signup.dto';
+import { SignOutDto } from './dto/signup.dto';
 import { SignInDto } from './dto/signin.dto';
 import {
   ApiBody,
@@ -32,7 +32,7 @@ export class AuthController {
   constructor(private readonly authenticationService: AuthService) {}
 
   @Post('/sign-up')
-  @ApiOperation({ summary: 'Create a new user' })
+  @ApiOperation({ summary: 'Creates a new user' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Created',
@@ -42,15 +42,15 @@ export class AuthController {
     description: 'Invalid email or invalid password.',
   })
   @ApiBody({
-    type: SignUpDto,
+    type: SignOutDto,
   })
-  signUp(@Body() signUpDto: SignUpDto) {
+  signUp(@Body() signUpDto: SignOutDto) {
     return this.authenticationService.logIn(signUpDto);
   }
 
   @HttpCode(200)
   @Post('/sign-in')
-  @ApiOperation({ summary: 'Authenticate an user' })
+  @ApiOperation({ summary: 'Authenticates an user' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'OK',
@@ -61,14 +61,14 @@ export class AuthController {
     description: 'Email or password does not match or does not exist.',
   })
   @ApiBody({
-    type: SignUpDto,
+    type: SignOutDto,
   })
   signIn(@Body() signInDto: SignInDto) {
     return this.authenticationService.logOut(signInDto);
   }
 
   @HttpCode(200)
-  @ApiOperation({ summary: 'Delete user account' })
+  @ApiOperation({ summary: "Deletes an user's account" })
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'OK',

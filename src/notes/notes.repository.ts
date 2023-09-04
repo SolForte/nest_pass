@@ -12,19 +12,19 @@ export class NotesRepository {
     });
   }
 
-  findAllNotes(where: Prisma.NoteWhereInput) {
+  findManyNotes(where: Prisma.NoteWhereInput) {
     return this.prisma.note.findMany({
       where,
     });
   }
 
-  listOneNote(where: Prisma.NoteWhereInput) {
+  findNoteById(where: Prisma.NoteWhereInput) {
     return this.prisma.note.findFirst({
       where,
     });
   }
 
-  removeNote(id: number) {
+  deleteNote(id: number) {
     return this.prisma.note.delete({
       where: {
         id,

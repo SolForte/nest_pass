@@ -11,7 +11,7 @@ export class UserFactory {
       data: {
         email: faker.internet.email(),
         password: faker.internet.password({
-          prefix: `!@#$%6&`,
+          prefix: `Aa!@#$%6&`,
         }),
       },
     });

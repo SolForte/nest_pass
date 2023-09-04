@@ -6,25 +6,25 @@ import { Prisma } from '@prisma/client';
 export class CardsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  create(data: Prisma.CreditCardCreateInput) {
+  createCard(data: Prisma.CreditCardCreateInput) {
     return this.prisma.creditCard.create({
       data,
     });
   }
 
-  findAll(where: Prisma.CreditCardWhereInput) {
+  fetchAllCards(where: Prisma.CreditCardWhereInput) {
     return this.prisma.creditCard.findMany({
       where,
     });
   }
 
-  listOne(where: Prisma.CreditCardWhereInput) {
+  getSingleCard(where: Prisma.CreditCardWhereInput) {
     return this.prisma.creditCard.findFirst({
       where,
     });
   }
 
-  remove(id: number) {
+  deleteCardById(id: number) {
     return this.prisma.creditCard.delete({
       where: {
         id,

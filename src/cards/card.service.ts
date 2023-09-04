@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import {
   Injectable,
   ConflictException,
@@ -16,13 +15,14 @@ import { CreditCard } from '@prisma/client';
 export class CardsService {
   private cryptr: Cryptr;
   constructor(private readonly cardsRepository: CardsRepository) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const Cryptr = require('cryptr');
     this.cryptr = new Cryptr(process.env.SECRET);
   }
 
   async createCard(createCardDto: CreateCardDto, user: JWTPayload) {
     try {
-      const card = await this.cardsRepository.create({
+      const result = await this.cardsRepository.createCard({
         ...createCardDto,
         password: this.cryptr.encrypt(createCardDto.password),
         expirationDate: new Date(createCardDto.expirationDate),
@@ -32,8 +32,7 @@ export class CardsService {
           },
         },
       });
-
-      return exclude(card, 'createdAt', 'updatedAt', 'password');
+      return exclude(result, 'createdAt', 'updatedAt', 'password');
     } catch (error) {
       if (error.code === 'P2002') {
         throw new ConflictException();
@@ -41,45 +40,40 @@ export class CardsService {
     }
   }
 
-  async findOneCard(id: number, userId: number) {
-    const cards = await this.cardsRepository.listOne({ id });
-    this.cardValidation(cards, userId);
+  async findOneCardById(id: number, userId: number) {
+    const result = await this.cardsRepository.getSingleCard({ id });
+    this.cardValidationFunction(result, userId);
     return {
-      ...cards,
-      password: this.cryptr.decrypt(cards.password),
+      ...result,
+      password: this.cryptr.decrypt(result.password),
     };
   }
 
-  async findAll(id: number) {
-    const cards = await this.cardsRepository.findAll({
+  async getAllCards(id: number) {
+    const cards = await this.cardsRepository.fetchAllCards({
       authorId: id,
     });
+    //returns if no cards exist
     if (cards.length === 0) {
       return cards;
     }
-    const decryptedCards = cards.map((card) => ({
+    const result = cards.map((card) => ({
       ...card,
       password: this.cryptr.decrypt(card.password),
     }));
-    return decryptedCards;
+    return result;
   }
 
-  async removeCard(id: number, userId: number) {
-    const card = await this.findOneCard(id, userId);
-    const deleteCard = await this.cardsRepository.remove(card.id);
-    return exclude(
-      deleteCard,
-      'password',
-      'secureCode',
-      'createdAt',
-      'updatedAt',
-    );
+  async deleteCard(id: number, userId: number) {
+    const card = await this.findOneCardById(id, userId);
+    const result = await this.cardsRepository.deleteCardById(card.id);
+    return exclude(result, 'password', 'secureCode', 'createdAt', 'updatedAt');
   }
 
-  private cardValidation(cards: CreditCard, userId: number) {
-    if (!cards) {
+  private cardValidationFunction(CreditCard: CreditCard, userId: number) {
+    if (!CreditCard) {
       throw new NotFoundException();
-    } else if (cards.authorId !== userId) {
+    } else if (CreditCard.authorId !== userId) {
       throw new ForbiddenException();
     }
   }

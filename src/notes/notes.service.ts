@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import {
   Injectable,
   ConflictException,
@@ -15,7 +14,7 @@ import { Note } from '@prisma/client';
 export class NotesService {
   constructor(private readonly notesRepository: NotesRepository) {}
 
-  async createNote(createNotesDto: CreateNotesDto, user: JWTPayload) {
+  async createNewNote(createNotesDto: CreateNotesDto, user: JWTPayload) {
     try {
       const note = await this.notesRepository.createNote({
         ...createNotesDto,
@@ -28,38 +27,42 @@ export class NotesService {
 
       return exclude(note, 'createdAt', 'updatedAt');
     } catch (error) {
-      if (error.code === 'P2002') throw new ConflictException();
+      if (error.code === 'P2002') {
+        throw new ConflictException();
+      }
     }
   }
 
-  async findOneNote(id: number, userId: number) {
-    const notes = await this.notesRepository.listOneNote({ id });
+  async getNoteById(id: number, userId: number) {
+    const result = await this.notesRepository.findNoteById({ id });
 
-    this.noteValidation(notes, userId);
+    this.noteValidation(result, userId);
 
-    return notes;
+    return result;
   }
 
-  async findAllNotes(id: number) {
-    const notes = await this.notesRepository.findAllNotes({
+  async fetchAllNotes(id: number) {
+    const result = await this.notesRepository.findManyNotes({
       authorId: id,
     });
 
-    if (notes.length === 0) return notes;
+    if (result.length === 0) {
+      return result;
+    }
 
-    return notes;
+    return result;
   }
 
-  async removeNote(id: number, userId: number) {
-    const note = await this.findOneNote(id, userId);
-    const removedNotes = await this.notesRepository.removeNote(note.id);
-    return exclude(removedNotes, 'updatedAt', 'createdAt', 'description');
+  async eraseNote(id: number, userId: number) {
+    const note = await this.getNoteById(id, userId);
+    const result = await this.notesRepository.deleteNote(note.id);
+    return exclude(result, 'updatedAt', 'createdAt', 'description');
   }
 
-  private noteValidation(notes: Note, userId: number) {
-    if (!notes) {
+  private noteValidation(note: Note, userId: number) {
+    if (!note) {
       throw new NotFoundException();
-    } else if (notes.authorId !== userId) {
+    } else if (note.authorId !== userId) {
       throw new ForbiddenException();
     }
   }

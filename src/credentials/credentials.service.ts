@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-var-requires */
 import {
   Injectable,
   ConflictException,
@@ -17,13 +16,14 @@ export class CredentialsService {
   private cryptr: Cryptr;
 
   constructor(private readonly credentialsRepository: CredentialsRepository) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const Cryptr = require('cryptr');
     this.cryptr = new Cryptr(process.env.SECRET);
   }
 
   async create(createCredentialDto: CreateCredentialDto, user: JWTPayload) {
     try {
-      const credential = await this.credentialsRepository.createCredential({
+      const result = await this.credentialsRepository.createCredential({
         ...createCredentialDto,
         password: this.cryptr.encrypt(createCredentialDto.password),
         Author: {
@@ -33,46 +33,50 @@ export class CredentialsService {
         },
       });
 
-      return exclude(credential, 'createdAt', 'updatedAt', 'password');
+      return exclude(result, 'createdAt', 'updatedAt', 'password');
     } catch (error) {
-      if (error.code === 'P2002') throw new ConflictException();
+      if (error.code === 'P2002') {
+        throw new ConflictException();
+      }
     }
   }
 
-  async findOneCredential(id: number, userId: number) {
-    const credentials = await this.credentialsRepository.listOneCredential({
+  async getOneCredential(id: number, userId: number) {
+    const result = await this.credentialsRepository.getSingleCredential({
       id,
     });
 
-    this.validCredentials(credentials, userId);
+    this.validCredentials(result, userId);
 
     return {
-      ...credentials,
-      password: this.cryptr.decrypt(credentials.password),
+      ...result,
+      password: this.cryptr.decrypt(result.password),
     };
   }
 
   async findAllCredentials(id: number) {
-    const credentials = await this.credentialsRepository.findAllCredentials({
+    const credentials = await this.credentialsRepository.findManyCredentials({
       authorId: id,
     });
 
-    if (credentials.length === 0) return credentials;
+    if (credentials.length === 0) {
+      return credentials;
+    }
 
-    const decryptedCredentials = credentials.map((credential) => ({
+    const result = credentials.map((credential) => ({
       ...credential,
       password: this.cryptr.decrypt(credential.password),
     }));
 
-    return decryptedCredentials;
+    return result;
   }
 
-  async removeCredential(id: number, userId: number) {
-    const credential = await this.findOneCredential(id, userId);
-    const removeCredential = await this.credentialsRepository.removeCredential(
+  async eraseCredential(id: number, userId: number) {
+    const credential = await this.getOneCredential(id, userId);
+    const result = await this.credentialsRepository.deleteCredential(
       credential.id,
     );
-    return exclude(removeCredential, 'password', 'createdAt', 'updatedAt');
+    return exclude(result, 'password', 'createdAt', 'updatedAt');
   }
 
   private validCredentials(credentials: Credential, userId: number) {

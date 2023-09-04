@@ -4,7 +4,7 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateNotesDto {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ example: 'Title', description: 'note title' })
+  @ApiProperty({ example: 'My Note', description: 'Note title' })
   title: string;
 
   @IsNotEmpty()

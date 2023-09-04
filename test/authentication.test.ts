@@ -18,7 +18,7 @@ describe('AppController (e2e)', () => {
     }).compile();
     helpers = moduleFixture.get<Helpers>(Helpers);
     userFactory = moduleFixture.get<UserFactory>(UserFactory);
-    await helpers.cleanDb();
+    await helpers.cleanDatabase();
     app = moduleFixture.createNestApplication();
     app.useGlobalPipes(new ValidationPipe());
     await app.init();
@@ -32,28 +32,28 @@ describe('AppController (e2e)', () => {
   const VOID_EMAIL = 'void.email@email.com';
 
   describe('/users/sign-up (POST)', () => {
-    describe('should return 400', () => {
+    describe('should return HTTP Status Code 400', () => {
       it('if body is missing', async () => {
         const { status } = await server.post('/users/sign-up');
         expect(status).toBe(400);
       });
 
-      it('if given email is not valid', async () => {
+      it('if email is not valid', async () => {
         const { status } = await server
           .post('/users/sign-up')
           .send({ email: INVALID_EMAIL });
         expect(status).toBe(400);
       });
 
-      it('if given password is not valid', async () => {
+      it('if password is not valid', async () => {
         const { status } = await server
           .post('/users/sign-up')
           .send({ email: VALID_EMAIL, password: INVALID_PASSWORD });
         expect(status).toBe(400);
       });
     });
-    describe('should return 409', () => {
-      it('if email is already registered', async () => {
+    describe('should return HTTP Status Code 409', () => {
+      it('if an user already exists with this email', async () => {
         const user = await userFactory.create();
         const { status } = await server
           .post('/users/sign-up')
@@ -63,7 +63,7 @@ describe('AppController (e2e)', () => {
       });
     });
 
-    describe('should return 201', () => {
+    describe('should return HTTP Status Code 201', () => {
       it('if body is valid', async () => {
         const { status } = await server
           .post('/users/sign-up')
@@ -74,7 +74,7 @@ describe('AppController (e2e)', () => {
   });
 
   describe('/users/sign-in (POST)', () => {
-    describe('should return 400', () => {
+    describe('should return HTTP Status Code 400', () => {
       it('if body is missing', async () => {
         const { status } = await server.post('/users/sign-in');
         expect(status).toBe(400);
@@ -88,7 +88,7 @@ describe('AppController (e2e)', () => {
       });
     });
     //
-    describe('should return 401', () => {
+    describe('should return HTTP Status Code 401', () => {
       it('if user does not exist', async () => {
         const { status } = await server
           .post('/users/sign-in')
@@ -98,7 +98,7 @@ describe('AppController (e2e)', () => {
       });
     });
 
-    describe('should return 200', () => {
+    describe('should return HTTP Status Code 200', () => {
       it('if user exists', async () => {
         const { status, body } = await server
           .post('/users/sign-in')
